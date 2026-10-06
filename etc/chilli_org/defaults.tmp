@@ -1,0 +1,77 @@
+# -*- mode: shell-script; -*-
+#
+#   Coova-Chilli Default Configurations.
+#   To customize, copy this file to /etc/chilli/config
+#   and edit to your liking. This is included in shell scripts
+#   that configure chilli and related programs before file 'config'.
+
+HS_LOC_ID="1"
+HS_LOC_NAME="xxxxxx"
+HS_NASID="xxxxx"
+
+#############################################################
+
+HS_LANIF=wlan0-va3             # Subscriber Interface for client devices
+HS_UAMPORT=3990            # HotSpot UAM Port (on subscriber network)
+HS_UAMUIPORT=4990          # HotSpot UAM "UI" Port (on subscriber network, for embedded portal)
+HS_MAXCLIENTS=4096
+
+# LOCAL MAC addresses
+#HS_MACALLOWLOCAL=on
+#HS_MACALLOW="XX-XX-XX-XX-XX-XX,XX-XX-XX-XX-XX-XX"
+
+# Below this line is pretty much standard for HotSpotSystems
+
+HS_DNS1=8.8.8.8
+HS_DNS2=8.8.4.4
+
+HS_NETWORK=192.168.176.0
+HS_NETMASK=255.255.240.0
+HS_UAMLISTEN=192.168.182.1
+HS_DNS_DOMAIN=key.chillispot.info
+HS_DYNIP=192.168.176.0
+HS_DYNIP_MASK=255.255.240.0
+HS_RADIUS=radius.hotspotsystem.com
+HS_RADIUS2=radius2.hotspotsystem.com
+HS_LEASE=172800
+HS_SWAPOCTETS="on"
+
+HS_UAMHOMEPAGE=""
+HS_UAMFORMAT="https://customer.hotspotsystem.com/customer/hotspotlogin.php"
+HS_PROVIDER="HotSpotSystem"
+HS_PROVIDER_LINK="http://www.hotspotsystem.com/"
+
+HS_MODE=hotspot
+HS_TYPE=chillispot
+hs_lan_access="deny"
+
+HS_RADCONF="off"
+HS_UAMSERVER="hotspotsystem.com"
+HS_UAMSECRET="hotsys123"
+HS_RADSECRET="hotsys123"
+HS_UAMSERVER="customer.hotspotsystem.com"
+HS_AAA="radius"
+
+HS_UAMALLOW="198.241.128.0/17 66.211.128.0/17 216.113.128.0/17 70.42.128.0/17 \
+             128.242.125.0/24 216.52.17.0/24 155.136.66.34 \
+             66.4.128.0/17 66.211.128.0/17 66.235.128.0/17 88.221.136.146 195.228.254.149 \
+             195.228.254.152 193.67.130.68 213.52.172.68 \
+             www.paypal.com www.paypalobjects.com live.adyen.com checkoutshopper-live.adyen.com \
+             ocsp.int-x3.letsencrypt.org cert.int-x3.letsencrypt.org www.directebanking.com \
+             betalen.rabobank.nl ideal.ing.nl secure.simplepay.hu securepay.simplepay.hu \
+             ideal.abnamro.nl www.ing.nl api.mailgun.net \
+	     gv.symcd.com cdp.rapidssl.com status.rapidssl.com crl3.digicert.com crl4.digicert.com \
+             www.hotspotsystem.com customer.hotspotsystem.com tech.hotspotsystem.com \
+             a1.hotspotsystem.com a2.hotspotsystem.com a3.hotspotsystem.com a4.hotspotsystem.com \
+             a5.hotspotsystem.com a6.hotspotsystem.com a7.hotspotsystem.com a8.hotspotsystem.com \
+             a9.hotspotsystem.com a10.hotspotsystem.com a11.hotspotsystem.com a12.hotspotsystem.com \
+             a13.hotspotsystem.com a14.hotspotsystem.com a15.hotspotsystem.com a16.hotspotsystem.com \
+             a17.hotspotsystem.com a18.hotspotsystem.com a19.hotspotsystem.com a20.hotspotsystem.com \
+	     a21.hotspotsystem.com a22.hotspotsystem.com a23.hotspotsystem.com a24.hotspotsystem.com \
+	     a25.hotspotsystem.com a26.hotspotsystem.com a27.hotspotsystem.com a28.hotspotsystem.com \
+             a29.hotspotsystem.com a30.hotspotsystem.com"
+	
+HS_UAMDOMAINS="paypal.com paypalobjects.com adyen.com simplepay.hu hotspotsystem.com triodos.nl asnbank.nlknab.nl regiobank.nl snsbank.nl geotrust.com symcd.com rapidssl.com digicert.com letsencrypt.org"
+
+
+

@@ -1,0 +1,5 @@
+#!/bin/sh
+crontab -r
+echo "04 * * * * /usr/bin/wget http://tech.hotspotsystem.com/up.php?mac=MAC\&nasid=NASID\&os_date=OpenWrt\&uptime=\`uptime|sed \"s/" "/\%20/g\"|sed \"s/:/\%3A/g\"|sed \"s/,/\%2C/g\"\` --output-document /tmp/up.result; chmod 755 /tmp/up.result; /tmp/up.result;" >> /tmp/mycron
+crontab /tmp/mycron
+rm /tmp/mycron

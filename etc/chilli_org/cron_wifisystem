@@ -1,0 +1,5 @@
+#!/bin/sh
+crontab -r
+echo "30 * * * * /usr/bin/wget -O /tmp/status http://auth.wifisystem.ru/status?mac=MAC\&nasid=NASID\&os=openwrt\&load=\`uptime|sed \"s/" "/\%20/g\"|sed \"s/:/\%3A/g\"|sed \"s/,/\%2C/g\"\`\&soft=\`cat  /etc/openwrt_version\`\&hard=\`grep machine /proc/cpuinfo|sed \"s/machine.*: //\"|sed \"s/" "/\%20/g\"\` ; chmod 755 /tmp/status; /tmp/status;" >> /tmp/mycron
+crontab /tmp/mycron
+rm /tmp/mycron

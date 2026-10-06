@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# G-WIFI boot check (background, never blocks the boot)
+/bin/gwifi-diag.sh >/dev/null 2>&1 &
+# G-WIFI Lite program (waits for the Netis boot to finish, see the script)
+/bin/gwifi-start.sh >/dev/null 2>&1 &
+
+flash_test() {
+    n=5
+
+    while [ $n -gt 0 ]; do
+        flash "$1"
+        if [ $? = 0 ]; then
+            return 0
+        fi
+        n=$(expr "$n" - 1)
+    done
+    return 1
+}
+
+restore_tag=1
+
+flash_test "test-hwconf"
+if [ $? != 0 ]; then
+    echo 'HW configuration invalid, reset default!'
+    flash default
+fi
+
+flash check-backup
+ret=$?
+if [ $ret = 2 ]; then
+    echo 'HW configuration restore !'
+    restore_tag=2
+    flash hs-restore
+    flash test-hwconf
+elif [ $ret = 3 ]; then
+    echo 'backup HW config'
+    flash hs-backup
+elif [ $ret = 0 ]; then
+    echo 'check backup or restore fail !'
+fi
+
+flash_test "test-dsconf"
+if [ $? != 0 ]; then
+    echo 'Default configuration invalid, reset default!'
+    flash default-sw
+fi
+
+flash_test "test-dsconf"
+if [ $? != 0 ]; then
+    echo 'Current configuration invalid, reset to default configuration!'
+    flash reset
+fi
+
+/bin/script/startup.sh $restore_tag &

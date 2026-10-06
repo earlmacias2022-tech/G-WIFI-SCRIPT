@@ -1,0 +1,150 @@
+#!/bin/sh
+
+MAP="
+\":hst_uamserver:HS_UAMSERVER
+\":hst_uamsecret:HS_UAMSECRET
+\":hst_radsecret:HS_RADSECRET
+\":hst_local_netip:HS_NETWORK
+\":hst_local_netmask:HS_NETMASK
+\":hst_radius:HS_RADIUS
+\":hst_radius2:HS_RADIUS2
+\":hst_dns1:HS_DNS1
+\":hst_dns2:HS_DNS2
+\":hst_nasid:HS_NASID
+\":hst_loc_name:HS_LOC_NAME
+\":hst_portal_url:HS_UAMFORMAT
+=:hst_coaport:HS_COAPORT
+=:hst_leasetime:HS_LEASE
+"
+
+
+UCI_PREFIX="hotspot.cfg"
+DEFAULT_MANUAL_FILE="/etc/chilli/defaults.manual"
+DEFAULT_FILE="/etc/chilli/defaults"
+TMP_FILE="/tmp/chilli_default_tmp"
+CRON_FILE="/etc/chilli/cron_manual"
+
+cp "$DEFAULT_MANUAL_FILE" "$TMP_FILE" || exit 1
+
+update_default_var() {
+    local var="$1"
+    local val="$2"
+    local line="${var}=\"${val}\""
+
+    if grep -q "^$var=" "$TMP_FILE"; then
+        sed -i "s|^$var=.*|$line|" "$TMP_FILE"
+    else
+        echo "$line" >> "$TMP_FILE"
+    fi
+}
+
+get_value() {
+    local key="$1"
+    local input="$2"
+    echo "$input" | sed -n "s/.*${key}=\\([^,]*\\).*/\\1/p"
+}
+
+loc_id_parameter_sync() {
+    local lod_id
+
+    loc_id=$(flash get  hst_loc_id |awk -F\" '{print $2}')
+    if [ -n "$loc_id" ]; then
+        network=$(get_value "network" "$loc_id")
+        isocc=$(get_value "isocc" "$loc_id")
+        cc=$(get_value "cc" "$loc_id")
+        ac=$(get_value "ac" "$loc_id")
+    fi
+
+    if [ -n "$isocc" ]; then
+        update_default_var "HS_LOC_ISOCC" "$isocc"
+    fi
+    if [ -n "$cc" ]; then
+        update_default_var "HS_LOC_CC" "$cc"
+    fi
+    if [ -n "$ac" ]; then
+        update_default_var "HS_LOC_AC" "$ac"
+    fi
+    if [ -n "$network" ]; then
+        update_default_var "HS_LOC_NETWORK" "$network"
+    fi
+}
+
+network_addtion_parameter_sync() {
+    local network
+    local netmask
+
+    network=$(flash get hst_local_netip | awk -F\" '{print $2}' 2>/dev/null)
+    netmask=$(flash get hst_local_netmask | awk -F\" '{print $2}' 2>/dev/null)
+    if [ -n "$network" ] && [ -n "$netmask" ]; then
+        uamlisten=$(echo "$network" | awk -F. '{printf("%d.%d.%d.1\n", $1, $2, $3)}')
+        dynip=$(echo "$network" | awk -F. '{printf("%d.%d.%d.10\n", $1, $2, $3)}')
+
+        update_default_var "HS_UAMLISTEN" "$uamlisten"
+        update_default_var "HS_DYNIP" "$dynip"
+        update_default_var "HS_DYNIP_MASK" "$netmask"
+    fi
+}
+
+uam_url_handled() {
+    local portal_url=$(flash get  hst_portal_url |awk -F\" '{print $2}' 2>/dev/null)
+    local uam_server=$(flash get  hst_uamserver |awk -F\" '{print $2}' 2>/dev/null)
+
+    if [ -n "$portal_url" ]; then
+        return
+    fi
+
+    if echo "$uam_server" | grep -q '^http'; then
+        portal_url="$uam_server"
+    else
+        portal_url="http://$uam_server/"
+    fi
+
+    update_default_var "HS_UAMFORMAT" "$portal_url"
+}
+
+chilli_parameter_sync() {
+    local manual=$(flash get hst_isp | awk -F\" '{print $2}')
+    [ "${manual}" == "manual" ] || return
+
+    for entry1 in $MAP; do
+	entry=${entry1:2:64}
+	sep=${entry1:0:1}
+        key="${entry%%:*}"
+        var="${entry##*:}"
+
+        val=$(flash get "$key" |awk -F"$sep" '{print $2}' 2>/dev/null)
+        [ $? -ne 0 ] && continue
+
+        if echo "$val" | grep -q "'"; then
+            val=$(echo "$val" | sed "s/'//g")
+        fi
+
+        update_default_var "$var" "$val"
+    done
+    
+    network_addtion_parameter_sync
+    loc_id_parameter_sync
+    uam_url_handled
+    cat /tmp/chilli_manual_uam >> "$TMP_FILE"
+
+    mv "$TMP_FILE" "$DEFAULT_FILE"
+}
+
+chilli_cron_parameter_sync() {
+    local mac=$(ifconfig br0 |grep HWaddr |awk -F' ' '{print $5}')
+    local nasid=$(flash get hst_nasid | awk -F\" '{print $2}')
+    local portal_url=$(flash get  hst_portal_url |awk -F\" '{print $2}')
+
+    if [ -n "$nasid" ] && [ -n "$portal_url" ] && [ -n "$mac" ]; then
+        sed -e "s|MAC|$mac|g" \
+        -e "s|NASID|$nasid|g" \
+        -e "s|URL|$portal_url|g" \
+            "$CRON_FILE" > "/tmp/hotspot_cron"
+        chmod 777 /tmp/hotspot_cron
+        /tmp/hotspot_cron
+    fi
+}
+
+chilli_parameter_sync
+chilli_cron_parameter_sync
+

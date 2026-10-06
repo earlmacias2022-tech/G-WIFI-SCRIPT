@@ -1,0 +1,4 @@
+config hotspot 'cfg'
+	option disabled '1'
+	option isp 'hotspotsystem'
+

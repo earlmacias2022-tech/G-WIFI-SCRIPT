@@ -1,0 +1,49 @@
+# -*- mode: shell-script; -*-
+#
+#   Coova-Chilli Default Configurations.
+#   To customize, copy this file to /etc/chilli/config
+#   and edit to your liking. This is included in shell scripts
+#   that configure chilli and related programs before file 'config'.
+
+
+#############################################################
+
+HS_LANIF=wlan0-va3             # Subscriber Interface for client devices
+HS_NETWORK=192.168.182.0        # HotSpot Network (must include HS_UAMLISTEN)
+HS_NETMASK=255.255.254.0   # HotSpot Network Netmask
+HS_UAMLISTEN=192.168.182.1      # HotSpot IP Address (on subscriber network)
+HS_UAMPORT=3990            # HotSpot UAM Port (on subscriber network)
+HS_UAMUIPORT=4990          # HotSpot UAM "UI" Port (on subscriber network, for embedded portal)
+HS_DYNIP=192.168.182.10
+HS_DYNIP_MASK=255.255.254.0
+HS_LEASE=57600
+HS_SWAPOCTETS="on"
+HS_DNS_DOMAIN=key.chillispot.info
+
+HS_DNS1=8.8.8.8
+HS_DNS2=208.67.222.222
+
+HS_NASID=
+HS_UAMSERVER="auth.wifisystem.ru"
+HS_UAMSECRET=
+HS_RADSECRET="wfs123"    # Set to be your RADIUS shared secret
+HS_AAA="radius"
+
+HS_RADIUS=radius.wifisystem.ru
+HS_RADIUS2=radius2.wifisystem.ru
+
+HS_UAMHOMEPAGE=""
+HS_UAMFORMAT="https://auth.wifisystem.ru/hotspotlogin"
+HS_PROVIDER=WiFiSYSTEM
+HS_PROVIDER_LINK=http://wifisystem.ru/
+
+HS_MODE=hotspot
+HS_TYPE=chillispot
+
+HS_UAMALIASNAME=chilli
+HS_RADCONF=off           # Get some configurations from RADIUS or a URL ('on' and 'url' respectively)
+
+
+HS_UAMALLOW="95.167.165.64/27 195.14.118.0/23 130.193.36.0/22 84.201.136.0/22 213.59.200.64/28  			91.200.28.0/24 91.227.52.0/24 109.207.2.0/24 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 			               wifisystem.ru paymaster.ru www.wifisystem.ru www.paymaster.ru esia.gosuslugi.ru              auth.wifisystem.ru support.wifisystem.ru lk.wifisystem.ru account.wifisystem.ru local.wifisystem.ru              s1.wifisystem.ru s2.wifisystem.ru s3.wifisystem.ru s4.wifisystem.ru s5.wifisystem.ru              s6.wifisystem.ru s7.wifisystem.ru s8.wifisystem.ru s9.wifisystem.ru s10.wifisystem.ru              s11.wifisystem.ru s12.wifisystem.ru s13.wifisystem.ru s14.wifisystem.ru s15.wifisystem.ru              s16.wifisystem.ru s17.wifisystem.ru s18.wifisystem.ru s19.wifisystem.ru s20.wifisystem.ru"
+HS_UAMDOMAINS="wifisystem.ru paymaster.ru"	
+
